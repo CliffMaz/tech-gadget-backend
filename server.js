@@ -7,6 +7,7 @@ import dbConnection from "./config/dbConnection.js";
 import orderRoutes from "./routes/order.js";
 import cartRoutes from "./routes/cart.js";
 import categoryRoutes from "./routes/category.js";
+import authRoutes from "./routes/auth.js";
 
 //connection to Db
 dbConnection();
@@ -26,6 +27,7 @@ app.use(
 );
 
 //routes middleware
+app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/order", orderRoutes);

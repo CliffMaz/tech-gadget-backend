@@ -1,25 +1,31 @@
 import express from "express";
+import User from "../model/User.js";
 
 const userRoutes = express.Router();
 
 //get all users
 
-userRoutes.get("/users", (req, res) => {
-  const users = [
-    { name: "cliford Mazibuko" },
-    { name: "Lelo M" },
-    { name: "kutloano Mofokeng" },
-    { name: "Grace Mazibuko" },
-    { name: "Clementine Sibs" },
-  ];
+userRoutes.get("/users", async (req, res) => {
+  try {
+    const users = await User.find();
+
+    res.status(200).send(users);
+  } catch (err) {
+    res.status(404).send(err);
+  }
   res.send(users);
 });
 
 //get user by ID
-userRoutes.get("/:id", (req, res) => {});
+userRoutes.get("/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
 
-//create a new user
-userRoutes.put("/addUser", (req, res) => {});
+    res.status(200).send(user);
+  } catch (err) {
+    res.status(404).send(err);
+  }
+});
 
 //update a user
 userRoutes.put("/updateUser", (req, res) => {});
