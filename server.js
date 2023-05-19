@@ -29,7 +29,7 @@ app.use(
 //routes middleware
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
-app.use("/api/products", productRoutes);
+app.use("/api/product", productRoutes);
 app.use("/api/order", orderRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("/api/cart", cartRoutes);
