@@ -1,6 +1,7 @@
 import express from "express";
 import User from "../model/User.js";
 import bcrypt from "bcryptjs";
+import { registerValidation, updateUserValidation } from "../validation.js";
 
 const userRoutes = express.Router();
 
@@ -53,8 +54,15 @@ userRoutes.put("/update", async (req, res) => {
   if (!oldUser) return res.status(400).send({ user: null });
 
   if (req.body.password === "") {
+    const { error } = updateUserValidation(req.body);
+
+    if (error) return res.status(400).send(error.details);
+
     password = oldUser.password;
   } else {
+    const { error } = registerValidation(req.body);
+
+    if (error) return res.status(400).send(error.details);
     const salt = bcrypt.genSalt(10);
     password = bcrypt.hash(res.body.password, salt);
   }
@@ -66,11 +74,16 @@ userRoutes.put("/update", async (req, res) => {
     password: password,
   };
 
-  console.log(oldUser, user);
   //save user in the Db
   let ne;
   try {
-    ne = await user.updateOne({ _id: req.body._id }, { $push: user });
+    ne = await User.findOneAndUpdate(
+      { _id: req.body._id },
+      { $set: user },
+      {
+        new: true,
+      }
+    );
 
     res.send({
       success: true,
@@ -82,6 +95,8 @@ userRoutes.put("/update", async (req, res) => {
 });
 
 //delete a user
-userRoutes.put("/delete", (req, res) => {});
+userRoutes.put("/delete", (req, res) => {
+  User.findOneAndDelete({ _id: req.body._id });
+});
 
 export default userRoutes;

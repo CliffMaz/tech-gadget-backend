@@ -18,4 +18,4 @@ const cartSchema = mongoose.Schema({
   cartTotal: Number,
 });
 
-export default mongoose.model(Cart, cartSchema);
+export default mongoose.model("Cart", cartSchema);

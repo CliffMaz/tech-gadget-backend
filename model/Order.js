@@ -1,3 +1,4 @@
+import { boolean } from "@hapi/joi";
 import mongoose from "mongoose";
 
 const orderSchema = mongoose.Schema(
@@ -16,6 +17,43 @@ const orderSchema = mongoose.Schema(
         "Cancelled",
         "delivered",
       ],
+    },
+    shippingAddress: {
+      address: {
+        type: String,
+        required: true,
+      },
+      city: {
+        type: String,
+        required: true,
+      },
+      postalCode: {
+        type: String,
+        required: true,
+      },
+      country: {
+        type: String,
+        required: true,
+      },
+    },
+    isPaid: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    paidAt: {
+      type: Date,
+    },
+    isDelivered: {},
+    totalPrice: {
+      type: Number,
+      required: true,
+      default: 0.0,
+    },
+    shippingFee: {
+      type: Number,
+      required: true,
+      default: 0.0,
     },
   },
   { timestamps: true }
