@@ -76,4 +76,19 @@ authRoutes.post("/login", async (req, res) => {
   res.header("authtoken", token).send({ token, user });
 });
 
+authRoutes.post("/verify", async (req, res) => {
+  const token = req.header("authtoken");
+  if (!token) return res.send({ valid: false });
+
+  try {
+    const verify = jsonwebtoken.verify(token, process.env.JWT_TOKEN);
+    console.log(verify);
+    const user = await User.findById(verify._id);
+    user.password = undefined;
+    return res.send({ valid: true, user });
+  } catch (err) {
+    return res.status(400).send({ valid: false });
+  }
+});
+
 export default authRoutes;
