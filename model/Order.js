@@ -1,4 +1,3 @@
-import { boolean } from "@hapi/joi";
 import mongoose from "mongoose";
 
 const orderSchema = mongoose.Schema(
@@ -44,16 +43,17 @@ const orderSchema = mongoose.Schema(
     paidAt: {
       type: Date,
     },
-    isDelivered: {},
     totalPrice: {
       type: Number,
       required: true,
       default: 0.0,
     },
-    shippingFee: {
-      type: Number,
-      required: true,
-      default: 0.0,
+    shippingType: {
+      fee: { type: Number, required: true, default: 0.0 },
+      type: {
+        type: String,
+        required: true,
+      },
     },
   },
   { timestamps: true }

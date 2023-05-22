@@ -12,7 +12,7 @@ const productSchema = mongoose.Schema(
       type: String,
       required: true,
       min: 3,
-      max: 100,
+      max: 500,
     },
     stockQuantity: {
       type: Number,
@@ -27,8 +27,6 @@ const productSchema = mongoose.Schema(
     price: {
       type: Number,
       required: true,
-      min: 3,
-      max: 256,
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,

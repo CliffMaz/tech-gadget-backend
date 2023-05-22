@@ -1,13 +1,14 @@
 import express from "express";
 import User from "../model/User.js";
 import bcrypt from "bcryptjs";
+import tokenVerify from "../middlewares/tokenVerify.js";
 import { registerValidation, updateUserValidation } from "../validation.js";
 
 const userRoutes = express.Router();
 
 //get all users
 
-userRoutes.get("/all", async (req, res) => {
+userRoutes.get("/all", tokenVerify, async (req, res) => {
   try {
     const users = await User.find();
     res.send(users);
@@ -18,7 +19,7 @@ userRoutes.get("/all", async (req, res) => {
 });
 
 //get user by ID
-userRoutes.get("/:id", async (req, res) => {
+userRoutes.get("/:id", tokenVerify, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
 
@@ -28,8 +29,8 @@ userRoutes.get("/:id", async (req, res) => {
   }
 });
 
-//update a user
-userRoutes.put("/create", (req, res) => {
+//create a user
+userRoutes.put("/create", tokenVerify, (req, res) => {
   const user = new User({
     fullname: req.body.newUser.fullname,
     username: req.body.newUser.username,
@@ -47,7 +48,7 @@ userRoutes.put("/create", (req, res) => {
 });
 
 //update a user
-userRoutes.put("/update", async (req, res) => {
+userRoutes.put("/update", tokenVerify, async (req, res) => {
   const oldUser = await User.findOne({ _id: req.body._id });
   let password = "";
 
@@ -95,7 +96,7 @@ userRoutes.put("/update", async (req, res) => {
 });
 
 //delete a user
-userRoutes.put("/delete", (req, res) => {
+userRoutes.put("/delete", tokenVerify, (req, res) => {
   User.findOneAndDelete({ _id: req.body._id });
 });
 
