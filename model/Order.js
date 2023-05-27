@@ -2,10 +2,20 @@ import mongoose from "mongoose";
 
 const orderSchema = mongoose.Schema(
   {
-    order: {
+    orderBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Cart",
+      ref: "User",
     },
+    orderItems: [
+      {
+        quantity: Number,
+        subTotal: Number,
+        product: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+        },
+      },
+    ],
     orderStatus: {
       type: String,
       default: "Not Processed",
@@ -42,6 +52,7 @@ const orderSchema = mongoose.Schema(
     },
     paidAt: {
       type: Date,
+      default: Date.now,
     },
     totalPrice: {
       type: Number,

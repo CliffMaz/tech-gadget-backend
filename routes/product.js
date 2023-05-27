@@ -18,7 +18,8 @@ productRoutes.get("/all", async (req, res) => {
 
 //add a new product to the database
 productRoutes.post("/upload", uploadPhoto.single("img"), async (req, res) => {
-  const imageUrl = `/assets/image/${req.file.filename}`;
+  console.log(req.body);
+  const imageUrl = `http://localhost:4001/assets/images/${req.file.filename}`;
 
   console.log(req.body);
   const product = new Product({

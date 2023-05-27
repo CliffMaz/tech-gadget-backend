@@ -1,5 +1,5 @@
 import express from "express";
-import Cart from "../model/Cart";
+import Cart from "../model/Cart.js";
 
 const cartRoutes = express.Router();
 

@@ -18,7 +18,8 @@ const port = process.env.PORT || 4000;
 
 dotenv.config();
 
-//middleware
+//middleware\
+app.use("/assets", express.static("./assets"));
 app.use(express.json());
 app.use(
   cors({

@@ -8,7 +8,33 @@ const orderRoutes = express.Router();
 //get all orders from the db
 orderRoutes.get("/all", tokenVerify, async (req, res) => {
   try {
-    const orders = await Order.find();
+    const orders = await Order.find().populate({
+      path: "orderBy",
+      model: "User",
+    });
+
+    orders.forEach((item) => {
+      item.orderBy.password = undefined;
+    });
+
+    res.status(200).send(orders);
+  } catch (err) {
+    res.status(400).send("couldnt get Orders");
+  }
+});
+
+//get order by user id
+orderRoutes.get("/:id", tokenVerify, async (req, res) => {
+  try {
+    const orders = await Order.find({ orderBy: req.params.id }).populate({
+      path: "orderBy",
+      model: "User",
+    });
+    //to put an if statement later on
+    orders.forEach((item) => {
+      item.orderBy.password = undefined;
+    });
+
     res.status(200).send(orders);
   } catch (err) {
     res.status(400).send("couldnt get Orders");
@@ -18,10 +44,9 @@ orderRoutes.get("/all", tokenVerify, async (req, res) => {
 //add a new order to the database
 orderRoutes.post("/add", async (req, res) => {
   const newOrder = Order({
-    order: req.body.cart_id,
+    orderBy: req.body.orderBy,
+    orderItems: req.body.orderItems,
     shippingAddress: req.body.shippingAddress,
-    isPaid: req.body.isPaid,
-    paidAt: new Date(),
     totalPrice: req.body.totalPrice,
     shippingType: req.body.shippingType,
   });
@@ -42,8 +67,11 @@ orderRoutes.post("/add", async (req, res) => {
 orderRoutes.put("/update", async (req, res) => {
   let order = "";
   const newOrder = {
+    orderItems: req.body.orderItems,
+    orderStatus: req.body.orderStatus,
     shippingAddress: req.body.shippingAddress,
     isPaid: req.body.isPaid,
+    paidAt: req.body.paidAt,
     totalPrice: req.body.totalPrice,
     shippingType: req.body.shippingType,
   };
