@@ -24,7 +24,7 @@ orderRoutes.get("/all", tokenVerify, async (req, res) => {
 });
 
 //get order by user id
-orderRoutes.get("/:id", tokenVerify, async (req, res) => {
+orderRoutes.get("/user/:id", tokenVerify, async (req, res) => {
   try {
     const orders = await Order.find({ orderBy: req.params.id }).populate({
       path: "orderBy",
@@ -38,6 +38,7 @@ orderRoutes.get("/:id", tokenVerify, async (req, res) => {
     res.status(200).send(orders);
   } catch (err) {
     res.status(400).send("couldnt get Orders");
+    npx;
   }
 });
 
@@ -54,7 +55,7 @@ orderRoutes.post("/add", async (req, res) => {
   try {
     const savedOrder = await newOrder.save();
 
-    res.status(200).send(savedOrder);
+    res.status(200).send({ _id: savedOrder._id });
   } catch (err) {
     res.status(200).send({
       feedback: "failed to create order",
@@ -107,9 +108,14 @@ orderRoutes.put("/delete", async (req, res) => {
 
 //get a order by id
 orderRoutes.get("/:id", tokenVerify, async (req, res) => {
-  const id = req.params;
+  const id = req.params.id;
   try {
-    const order = await Order.findById(id);
+    const order = await Order.find({ _id: id })
+      .populate({
+        path: "orderItems.product",
+      })
+      .populate({ path: "orderBy" });
+
     res.status(200).send(order);
   } catch (err) {
     res.status(400).send({
