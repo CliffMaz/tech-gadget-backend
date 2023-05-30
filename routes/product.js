@@ -83,7 +83,7 @@ productRoutes.put("/delete", tokenVerify, async (req, res) => {
 //get a product by id
 productRoutes.get("/:id", async (req, res) => {
   try {
-    const product = await Product.findById(req.params);
+    const product = await Product.findById(req.params.id);
     res.status(200).send(product);
   } catch (err) {
     res.status(400).send({ success: false, err });

@@ -75,6 +75,7 @@ orderRoutes.put("/update", async (req, res) => {
     paidAt: req.body.paidAt,
     totalPrice: req.body.totalPrice,
     shippingType: req.body.shippingType,
+    paypalId: req.body.paypalId,
   };
 
   try {

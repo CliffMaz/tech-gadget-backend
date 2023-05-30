@@ -49,23 +49,16 @@ userRoutes.put("/create", tokenVerify, (req, res) => {
 
 //update a user
 userRoutes.put("/update", tokenVerify, async (req, res) => {
-  const oldUser = await User.findOne({ _id: req.body._id });
+  const oldUser = await User.findOne({ _id: req.body?._id });
   let password = "";
 
   if (!oldUser) return res.status(400).send({ user: null });
 
-  if (req.body.password === "") {
-    const { error } = updateUserValidation(req.body);
-
-    if (error) return res.status(400).send(error.details);
-
+  if (req.body?.password === "") {
     password = oldUser.password;
   } else {
-    const { error } = registerValidation(req.body);
-
-    if (error) return res.status(400).send(error.details);
     const salt = bcrypt.genSalt(10);
-    password = bcrypt.hash(res.body.password, salt);
+    password = bcrypt.hash(res.body?.password, salt);
   }
 
   const user = {

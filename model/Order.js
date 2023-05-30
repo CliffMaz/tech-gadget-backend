@@ -66,6 +66,9 @@ const orderSchema = mongoose.Schema(
         required: true,
       },
     },
+    paypalId: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
