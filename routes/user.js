@@ -2,6 +2,7 @@ import express from "express";
 import User from "../model/User.js";
 import bcrypt from "bcryptjs";
 import tokenVerify from "../middlewares/tokenVerify.js";
+import { uploadPhoto } from "../middlewares/upload.js";
 import { registerValidation, updateUserValidation } from "../validation.js";
 
 const userRoutes = express.Router();
@@ -48,45 +49,58 @@ userRoutes.put("/create", tokenVerify, (req, res) => {
 });
 
 //update a user
-userRoutes.put("/update", tokenVerify, async (req, res) => {
-  const oldUser = await User.findOne({ _id: req.body?._id });
-  let password = "";
+userRoutes.put(
+  "/update",
+  uploadPhoto.single("profileDisplay"),
+  tokenVerify,
+  async (req, res) => {
+    const oldUser = await User.findOne({ _id: req.body?._id });
+    let password = "";
+    let imageUrl;
 
-  if (!oldUser) return res.status(400).send({ user: null });
+    if (req.body?.profileDisplay === oldUser?.profileDisplay) {
+      imageUrl = req.body?.profileDisplay;
+    } else {
+      imageUrl = `http://localhost:4001/assets/images/${req?.file?.filename}`;
+    }
 
-  if (req.body?.password === "") {
-    password = oldUser.password;
-  } else {
-    const salt = bcrypt.genSalt(10);
-    password = bcrypt.hash(res.body?.password, salt);
+    if (!oldUser) return res.status(400).send({ user: null });
+
+    if (req.body?.password === "") {
+      password = oldUser.password;
+    } else {
+      const salt = bcrypt.genSalt(10);
+      password = bcrypt.hash(res.body?.password, salt);
+    }
+
+    const user = {
+      fullname: req.body.fullname,
+      username: req.body.username,
+      email: req.body.email,
+      profileDisplay: imageUrl,
+      password: password,
+    };
+
+    //save user in the Db
+    let ne;
+    try {
+      ne = await User.findOneAndUpdate(
+        { _id: req.body._id },
+        { $set: user },
+        {
+          new: true,
+        }
+      );
+
+      res.send({
+        success: true,
+        ne,
+      });
+    } catch (err) {
+      res.status(400).send({ success: false, ne });
+    }
   }
-
-  const user = {
-    fullname: req.body.fullname,
-    username: req.body.username,
-    email: req.body.email,
-    password: password,
-  };
-
-  //save user in the Db
-  let ne;
-  try {
-    ne = await User.findOneAndUpdate(
-      { _id: req.body._id },
-      { $set: user },
-      {
-        new: true,
-      }
-    );
-
-    res.send({
-      success: true,
-      ne,
-    });
-  } catch (err) {
-    res.status(400).send({ success: false, ne });
-  }
-});
+);
 
 //delete a user
 userRoutes.put("/delete", tokenVerify, (req, res) => {

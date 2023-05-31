@@ -18,10 +18,8 @@ productRoutes.get("/all", async (req, res) => {
 
 //add a new product to the database
 productRoutes.post("/upload", uploadPhoto.single("img"), async (req, res) => {
-  console.log(req.body);
   const imageUrl = `http://localhost:4001/assets/images/${req.file.filename}`;
 
-  console.log(req.body);
   const product = new Product({
     pname: req.body.pname,
     pDesc: req.body.pDesc,
@@ -46,7 +44,7 @@ productRoutes.put("/update", tokenVerify, async (req, res) => {
   if (req.body.img === oldProduct.img) {
     imageUrl = req.body.img;
   } else {
-    imageUrl = `/assets/image/${req.file.filename}`;
+    imageUrl = `/assets/images/${req.file.filename}`;
   }
 
   const product = {
