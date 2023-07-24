@@ -6,12 +6,16 @@ import Order from "../model/Order.js";
 const orderRoutes = express.Router();
 
 //get all orders from the db
-orderRoutes.get("/all", tokenVerify, async (req, res) => {
+orderRoutes.get("/all", async (req, res) => {
   try {
-    const orders = await Order.find().populate({
-      path: "orderBy",
-      model: "User",
-    });
+    const orders = await Order.find()
+      .populate({
+        path: "orderBy",
+        model: "User",
+      })
+      .populate({
+        path: "orderItems.product",
+      });
 
     orders.forEach((item) => {
       item.orderBy.password = undefined;

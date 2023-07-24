@@ -9,12 +9,13 @@ const userRoutes = express.Router();
 
 //get all users
 
-userRoutes.get("/all", tokenVerify, async (req, res) => {
+userRoutes.get("/all", async (req, res) => {
   try {
     const users = await User.find();
-    res.send(users);
+    //res.send(users);
     res.status(200).send(users);
   } catch (err) {
+    console.log(err);
     res.status(404).send(err);
   }
 });

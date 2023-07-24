@@ -82,7 +82,7 @@ authRoutes.post("/verify", async (req, res) => {
 
   try {
     const verify = jsonwebtoken.verify(token, process.env.JWT_TOKEN);
-    console.log(verify);
+
     const user = await User.findById(verify._id);
     user.password = undefined;
     return res.send({ valid: true, user });

@@ -37,36 +37,44 @@ productRoutes.post("/upload", uploadPhoto.single("img"), async (req, res) => {
 });
 
 //update a product from the database
-productRoutes.put("/update", tokenVerify, async (req, res) => {
-  const oldProduct = await User.findOne({ _id: req.body._id });
-  let imageUrl = "";
-  let updated = "";
-  if (req.body.img === oldProduct.img) {
-    imageUrl = req.body.img;
-  } else {
-    imageUrl = `/assets/images/${req.file.filename}`;
-  }
+productRoutes.put(
+  "/update",
+  uploadPhoto.single("img"),
+  tokenVerify,
+  async (req, res) => {
+    console.log(req.body);
+    const oldProduct = await Product.findOne({ _id: req.body._id });
+    let imageUrl = "";
+    let updated = "";
+    console.log(oldProduct);
+    if (req.body.img === oldProduct?.img) {
+      imageUrl = req.body.img;
+    } else {
+      imageUrl = `http://localhost:4001/assets/images/${req.file.filename}`;
+    }
 
-  const product = {
-    pname: req.body.pname,
-    pDesc: req.body.desc,
-    stockQuantity: req.body.qauntity,
-    img: imageUrl,
-    price: req.body.price,
-    category: req.body.category,
-  };
-  try {
-    updated = await Product.findOneAndUpdate(
-      { _id: req.body._id },
-      { $set: product },
-      {
-        new: true,
-      }
-    );
-  } catch (err) {
-    res.status(400).send({ success: false, err, updated });
+    const product = {
+      pname: req.body.pname,
+      pDesc: req.body.desc,
+      stockQuantity: req.body.qauntity,
+      img: imageUrl,
+      price: req.body.price,
+      category: req.body.category,
+    };
+    try {
+      updated = await Product.findOneAndUpdate(
+        { _id: req.body._id },
+        { $set: product },
+        {
+          new: true,
+        }
+      );
+      res.status(200).send(updated);
+    } catch (err) {
+      res.status(400).send({ success: false, err, updated });
+    }
   }
-});
+);
 
 //delete a product from the database
 productRoutes.put("/delete", tokenVerify, async (req, res) => {
